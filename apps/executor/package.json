@@ -1,0 +1,28 @@
+{
+  "name": "goserverlesslambda",
+  "version": "1.0.0",
+  "description": "Go Serverless Lambda Guide",
+  "main": "main.go",
+  "scripts": {
+    "setup:dev": "env-cmd -f .env cross-env-shell serverless config credentials --provider aws -o --key '$AWS_TOKEN' --secret '$AWS_SECRET' --profile '$AWS_PROFILE'",
+    "build": "env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build  -o bin/goserverlesslambda .",
+    "deploy:dev": "env-cmd -f .env cross-env-shell serverless deploy  --stage development --aws-profile '$AWS_PROFILE' --region '$AWS_REGION'",
+    "deploy:prod": "env-cmd -f .env cross-env-shell serverless deploy --stage production  --aws-profile '$AWS_PROFILE' --region '$AWS_REGION'",
+    "deploy:prod-ec1": "env-cmd -f .env cross-env-shell serverless deploy --stage production  --aws-profile '$AWS_PROFILE' --region 'eu-central-1'",
+    "deploy:prod-uw1": "env-cmd -f .env cross-env-shell serverless deploy --stage production  --aws-profile '$AWS_PROFILE' --region 'us-west-1'",
+    "deploy:prod-ue1": "env-cmd -f .env cross-env-shell serverless deploy --stage production  --aws-profile '$AWS_PROFILE' --region 'us-east-1'",
+    "delete:dev": "env-cmd -f .env cross-env-shell serverless remove  --stage development --aws-profile '$AWS_PROFILE' --region '$AWS_REGION'",
+    "delete:prod": "env-cmd -f .env cross-env-shell serverless remove  --stage production --aws-profile '$AWS_PROFILE' --region '$AWS_REGION'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/nic-jennings/go-serverless-lambda"
+  },
+  "author": "Nic Jennings",
+  "license": "ISC",
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "env-cmd": "^10.1.0",
+    "serverless-dotenv-plugin": "^4.0.2"
+  }
+}

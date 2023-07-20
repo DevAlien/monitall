@@ -1,0 +1,20 @@
+{
+  "name": "@monitall/queue",
+  "version": "0.1.0",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "license": "MIT",
+  "scripts": {
+    "clean": "rm -rf .turbo node_modules",
+    "with-env": "dotenv -e ../../.env --"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1409.0"
+  },
+  "devDependencies": {
+    "dotenv-cli": "^7.2.1",
+    "tsx": "^3.12.7",
+    "typescript": "^5.1.0-beta"
+  }
+}

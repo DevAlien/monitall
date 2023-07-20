@@ -1,0 +1,188 @@
+generator client {
+    provider     = "prisma-client-js"
+}
+
+datasource db {
+    provider     = "postgresql"
+    url          = env("DATABASE_URL")
+}
+
+model Account {
+  id                String   @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?  @db.Text
+  refresh_token_expires_in Int?
+  access_token      String?  @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?  @db.Text
+  session_state     String?
+  createdAt         DateTime @default(now()) @map(name: "created_at")
+  updatedAt         DateTime @default(now()) @map(name: "updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map(name: "accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map(name: "sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verificationtokens")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  role UserRole @default(USER)
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
+  updatedAt     DateTime  @default(now()) @map(name: "updated_at")
+
+  accounts Account[]
+  sessions Session[]
+  organizations UsersOnOrganizations[]
+  monitors Monitor[]
+  @@map(name: "users")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+
+model Organization {
+  id        String   @id @default(cuid())
+  name     String
+  slug String @unique
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @default(now()) @map(name: "updated_at")
+  authorId  String  @map(name: "author_id")
+  subdomain     String?
+  customDomain  String?
+  logo     String?
+  description String?
+  stripeCustomerId       String?   @unique @map(name: "stripe_customer_id")
+  stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id")
+  stripePriceId          String?   @map(name: "stripe_price_id")
+  stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end")
+
+  users UsersOnOrganizations[]
+  monitors Monitor[]
+  @@map(name: "organizations")
+}
+
+model UsersOnOrganizations {
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String  @map(name: "user_id")
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String  @map(name: "organization_id")
+  role       Role
+  assignedAt DateTime @default(now())  @map(name: "assigned_at")
+  assignedBy String  @map(name: "assigned_by")
+
+  @@id([userId, organizationId])
+  @@map(name: "users_organizations")
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+enum MonitorType {
+  HTTP
+}
+
+enum MonitorStatus {
+  ACTIVE
+  INACTIVE
+}
+model Monitor {
+  id        Int   @id @default(autoincrement())
+  name     String
+  type    MonitorType
+  address String
+  interval Int @default(60)
+  region String[]
+  status MonitorStatus @default(ACTIVE)
+  lastExecutedAt DateTime?  @map(name: "last_executed_at")
+
+  user       User     @relation(fields: [createdBy], references: [id])
+  createdBy     String  @map(name: "created_by")
+  Organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String  @map(name: "organization_id")
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @default(now()) @map(name: "updated_at")
+
+  MonitorEvents MonitorEvent[]
+
+  @@map(name: "monitors")
+}
+
+enum MonitorEventStatus {
+  PENDING
+  RUNNING
+  FINISHED
+}
+
+enum MonitorEventResult {
+  SUCCESS
+  FAILURE
+}
+
+model MonitorEvent {
+  id        Int   @id @default(autoincrement())
+  scheduledAt DateTime?  @map(name: "scheduled_at")
+  startTime DateTime?  @map(name: "start_time")
+  endTime DateTime?  @map(name: "end_time")
+  address String?
+  duration Int?
+  status MonitorEventStatus @default(PENDING)
+  result MonitorEventResult?
+  average Int?
+  min Int?
+  max Int?
+
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @default(now()) @map(name: "updated_at")
+
+  Monitor Monitor @relation(fields: [monitorId], references: [id])
+  monitorId Int  @map(name: "monitor_id")
+
+  @@map(name: "monitor_events")
+}
+
+model Region {
+  id        Int   @id @default(autoincrement())
+  name String
+  key String
+  description String?
+  address String?
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @default(now()) @map(name: "updated_at")
+
+  @@map(name: "regions")
+}

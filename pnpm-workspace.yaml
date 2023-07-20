@@ -1,0 +1,8 @@
+packages:
+  - apps/nextjs
+  - packages/auth
+  - packages/db
+  - packages/config/*
+  - packages/email
+  - packages/queue
+  - packages/ui

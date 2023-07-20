@@ -1,0 +1,20 @@
+{
+  "name": "@monitall/auth",
+  "version": "0.1.0",
+  "exports": {
+    ".": "./index.ts",
+    "./enums": "./enums.ts"
+  },
+  "license": "MIT",
+  "scripts": {},
+  "dependencies": {
+    "@monitall/db": "^0.1.0",
+    "@monitall/email": "^0.1.0",
+    "@next-auth/prisma-adapter": "^1.0.6",
+    "next-auth": "^4.22.1"
+  },
+  "devDependencies": {
+    "tsx": "^3.12.7",
+    "typescript": "^5.1.0-beta"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "@monitall/email",
+  "version": "0.1.0",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "license": "MIT",
+  "scripts": {
+    "clean": "rm -rf .turbo node_modules",
+    "with-env": "dotenv -e ../../.env --",
+    "dev": "email dev --port 3333"
+  },
+  "dependencies": {
+    "@react-email/components": "^0.0.7",
+    "react-email": "^1.9.4",
+    "resend": "^0.17.1"
+  },
+  "devDependencies": {
+    "dotenv-cli": "^7.2.1",
+    "tsx": "^3.12.7",
+    "typescript": "^5.1.0-beta"
+  }
+}
