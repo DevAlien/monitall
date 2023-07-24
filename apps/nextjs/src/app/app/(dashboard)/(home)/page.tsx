@@ -11,11 +11,7 @@ import { ModalNewOrganization } from "~/components/modal/new-organization";
 import { DashboardHeader } from "~/app/app/(dashboard)/components/dashboard-header";
 import { DashboardShell } from "~/app/app/(dashboard)/components/dashboard-shell";
 
-export default async function HomePage(props: {
-  children: React.ReactNode;
-  modal: React.ReactNode;
-  params: { slug: string };
-}) {
+export default async function HomePage() {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -101,7 +97,7 @@ export default async function HomePage(props: {
                   Manage
                 </Link>
                 <Link
-                  href={getStatusPageLink(o.slug, o.customDomain)}
+                  href={{ pathname: getStatusPageLink(o.slug, o.customDomain) }}
                   className="inline-flex w-full items-center justify-center gap-2 rounded-br-xl bg-white px-4 py-3 align-middle text-sm font-medium text-gray-700 shadow-sm transition-all hover:bg-gray-50  dark:border-gray-700 dark:bg-slate-900 dark:text-gray-400 dark:hover:bg-slate-800 dark:hover:text-white sm:p-4"
                 >
                   Status Page

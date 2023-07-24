@@ -8,7 +8,6 @@ import {
   ChevronLeft,
   ChevronRight,
   ClipboardCheck,
-  Command,
   Copy,
   CreditCard,
   File,

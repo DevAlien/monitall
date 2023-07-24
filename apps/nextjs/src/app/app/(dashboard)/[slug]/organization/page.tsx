@@ -1,16 +1,15 @@
 import { notFound } from "next/navigation";
+import { type Organization } from "@prisma/client";
+
 import { getCurrentUser } from "@monitall/auth";
 import { db } from "@monitall/db";
-import { Organization } from "@prisma/client";
 
 import { DashboardHeader } from "../../components/dashboard-header";
 import { DashboardShell } from "../../components/dashboard-shell";
 import { Members } from "./components/members";
 import EditOrganizationDetails from "./components/team-form";
 
-export default async function FundsPage(props: {
-  children: React.ReactNode;
-  modal: React.ReactNode;
+export default async function OrganizationPage(props: {
   params: { slug: string };
 }) {
   const user = await getCurrentUser();
@@ -21,7 +20,7 @@ export default async function FundsPage(props: {
 
   const organization = await db.organization.findFirst({
     where: {
-      slug: props.params.slug as string,
+      slug: props.params.slug,
       users: {
         some: {
           userId: user.id,

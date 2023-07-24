@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { type OrganizationSubscriptionPlan } from "types";
+
 // import { UserSubscriptionPlan } from "types"
 import { cn } from "@monitall/ui";
 import { buttonVariants } from "@monitall/ui/button";
@@ -14,7 +16,6 @@ import {
 } from "@monitall/ui/card";
 import { Icons } from "@monitall/ui/icons";
 import { toast } from "@monitall/ui/use-toast";
-import { OrganizationSubscriptionPlan } from "types";
 
 interface BillingFormProps extends React.HTMLAttributes<HTMLFormElement> {
   organizationSlug: string;
@@ -31,14 +32,12 @@ export function BillingForm({
 }: BillingFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
-  async function onSubmit(event) {
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsLoading(!isLoading);
 
     // Get a Stripe session URL.
-    const response = await fetch(
-      `/api/organizations/${organizationSlug}/stripe`,
-    );
+    const response = await fetch(`/api/v0/${organizationSlug}/stripe`);
 
     if (!response?.ok) {
       return toast({
@@ -51,9 +50,12 @@ export function BillingForm({
     // Redirect to the Stripe session.
     // This could be a checkout page for initial upgrade.
     // Or portal to manage existing subscription.
-    const session = await response.json();
-    if (session) {
-      window.location.href = session.url;
+    // type StripeSessionResponse = {
+    //   url?: string;
+    // };
+    const responseBody = await response.json();
+    if (responseBody) {
+      window.location.href = responseBody.url as string;
     }
   }
 

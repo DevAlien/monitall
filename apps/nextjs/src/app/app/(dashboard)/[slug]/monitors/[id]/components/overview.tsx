@@ -6,12 +6,7 @@ import { Icons } from "@monitall/ui/icons";
 
 import OverviewChart from "./overview-chart";
 
-export function Overview(props: {
-  monitorId: number;
-  children: React.ReactNode;
-  modal: React.ReactNode;
-  params: { slug: string; id: number };
-}) {
+export function Overview(props: { monitorId: number }) {
   // TODO: get monitor data from API
 
   return (

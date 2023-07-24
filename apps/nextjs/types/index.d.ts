@@ -1,5 +1,5 @@
-import { Organization, UsersOnOrganizations } from "@monitall/db";
-import { Icons } from "@monitall/ui/icons";
+import { type Organization, type UsersOnOrganizations } from "@monitall/db";
+import { type Icons } from "@monitall/ui/icons";
 
 export type NavItem = {
   title: string;
@@ -40,7 +40,7 @@ export type Member = UsersOnOrganizations & {
 export type SubscriptionPlan = {
   name: string;
   description: string;
-  stripePriceId: string;
+  stripePriceId: string | null;
 };
 
 export type OrganizationSubscriptionPlan = SubscriptionPlan &

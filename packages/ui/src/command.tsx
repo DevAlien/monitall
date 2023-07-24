@@ -67,6 +67,7 @@ const CommandInput2 = React.forwardRef<
     {...props}
   />
 ));
+CommandInput2.displayName = CommandPrimitive.Input.displayName;
 CommandInput.displayName = CommandPrimitive.Input.displayName;
 
 const CommandList = React.forwardRef<

@@ -3,10 +3,11 @@
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { UserRole } from "@prisma/client";
+
 import { getCurrentUser } from "@monitall/auth";
 import { db } from "@monitall/db";
 import { Icons } from "@monitall/ui/icons";
-import { UserRole } from "@prisma/client";
 
 import { ThemeToggle } from "~/components/theme-toggle";
 import { UserNav } from "~/components/user-nav";
@@ -26,7 +27,7 @@ export default async function RootLayout(props: {
     return notFound();
   }
 
-  const teams = await db.organization.findMany({
+  const organizations = await db.organization.findMany({
     where: {
       users: {
         some: {
@@ -47,10 +48,7 @@ export default async function RootLayout(props: {
             <span className="mx-2 text-lg font-bold text-muted-foreground">
               /
             </span>
-            <OrganizationSwitcher
-              organizations={teams}
-              currentOrganizationSlug={props.params.slug}
-            />
+            <OrganizationSwitcher organizations={organizations} />
             <MainNav className="mx-6" role={user.role} />
             <div className="ml-auto flex items-center space-x-4">
               <Search />

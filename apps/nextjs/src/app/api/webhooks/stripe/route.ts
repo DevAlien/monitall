@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
+import type Stripe from "stripe";
+
 import { db } from "@monitall/db";
-import Stripe from "stripe";
 
 import { stripe } from "~/lib/stripe";
 
@@ -14,10 +15,12 @@ export async function POST(req: Request) {
     event = stripe.webhooks.constructEvent(
       body,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET,
+      process.env.STRIPE_WEBHOOK_SECRET || "",
     );
   } catch (error) {
-    return new Response(`Webhook Error: ${error.message}`, { status: 400 });
+    let message = "Unknown Error";
+    if (error instanceof Error) message = error.message;
+    return new Response(`Webhook Error: ${message}`, { status: 400 });
   }
 
   const session = event.data.object as Stripe.Checkout.Session;
@@ -38,7 +41,7 @@ export async function POST(req: Request) {
       data: {
         stripeSubscriptionId: subscription.id,
         stripeCustomerId: subscription.customer as string,
-        stripePriceId: subscription.items.data[0].price.id,
+        stripePriceId: subscription?.items?.data[0]?.price.id,
         stripeCurrentPeriodEnd: new Date(
           subscription.current_period_end * 1000,
         ),
@@ -58,7 +61,7 @@ export async function POST(req: Request) {
         stripeSubscriptionId: subscription.id,
       },
       data: {
-        stripePriceId: subscription.items.data[0].price.id,
+        stripePriceId: subscription?.items?.data[0]?.price.id,
         stripeCurrentPeriodEnd: new Date(
           subscription.current_period_end * 1000,
         ),

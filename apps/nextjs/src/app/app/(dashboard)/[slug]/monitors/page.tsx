@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+
 import { getCurrentUser } from "@monitall/auth";
 import { db } from "@monitall/db";
 import { Button } from "@monitall/ui/button";
@@ -9,9 +10,7 @@ import { DashboardHeader } from "../../components/dashboard-header";
 import { DashboardShell } from "../../components/dashboard-shell";
 import { MonitorsTable } from "./components/monitors-table";
 
-export default async function FundsPage(props: {
-  children: React.ReactNode;
-  modal: React.ReactNode;
+export default async function MonitorsPage(props: {
   params: { slug: string };
 }) {
   const user = await getCurrentUser();
@@ -24,7 +23,7 @@ export default async function FundsPage(props: {
     where: {
       Organization: {
         is: {
-          slug: props.params.slug as string,
+          slug: props.params.slug,
         },
       },
     },

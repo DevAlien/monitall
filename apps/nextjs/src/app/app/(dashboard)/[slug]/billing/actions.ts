@@ -1,11 +1,10 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-import { authOptions, getCurrentUser } from "@monitall/auth";
-import { db } from "@monitall/db";
 import { Role } from "@prisma/client";
-import { getServerSession } from "next-auth/next";
-import { OrganizationSubscriptionPlan } from "types";
+import { type OrganizationSubscriptionPlan } from "types";
+
+import { getCurrentUser } from "@monitall/auth";
+import { db } from "@monitall/db";
 
 import { freePlan, proPlan } from "~/app/config";
 
@@ -14,7 +13,7 @@ const ensurePermissions = async (userId: string, organizationId: string) => {
     select: { role: true },
     where: {
       userId_organizationId: {
-        userId: userId!,
+        userId: userId,
         organizationId: organizationId,
       },
     },
@@ -93,15 +92,18 @@ export async function getOrganizationSubscriptionPlan(
 
   // Check if user is on a pro plan.
   const isPro =
-    organization.stripePriceId &&
-    organization.stripeCurrentPeriodEnd?.getTime() + 86_400_000 > Date.now();
+    (organization.stripePriceId &&
+      organization.stripeCurrentPeriodEnd &&
+      organization.stripeCurrentPeriodEnd?.getTime() + 86_400_000 >
+        Date.now()) ||
+    false;
 
   const plan = isPro ? proPlan : freePlan;
 
   return {
     ...plan,
     ...organization,
-    stripeCurrentPeriodEnd: organization.stripeCurrentPeriodEnd?.getTime(),
+    stripeCurrentPeriodEnd: organization.stripeCurrentPeriodEnd?.getTime() || 0,
     isPro,
   };
 }

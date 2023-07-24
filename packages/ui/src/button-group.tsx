@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 
-import { Button, ButtonProps, buttonVariants } from "./button";
+import { Button, type buttonVariants } from "./button";
 import { cn } from "./utils/cn";
 
 const buttonGroupVariants = cva("relative z-0 inline-flex");

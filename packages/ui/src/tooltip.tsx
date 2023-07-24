@@ -35,12 +35,15 @@ export interface TooltipEasyProps
 const TooltipEasy = React.forwardRef<
   React.ElementRef<typeof Tooltip>,
   TooltipEasyProps
->(({ content, children, ...props }, ref) => (
-  <Tooltip>
+>(({ content, children, ...props }, _) => (
+  <Tooltip {...props}>
     <TooltipTrigger asChild>{children}</TooltipTrigger>
     <TooltipContent>{content}</TooltipContent>
   </Tooltip>
 ));
+
+TooltipEasy.displayName = "TooltipEasy";
+
 export {
   TooltipEasy,
   Tooltip,

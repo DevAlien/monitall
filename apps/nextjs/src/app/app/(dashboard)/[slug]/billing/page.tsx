@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+
 import { getCurrentUser } from "@monitall/auth";
 import { db } from "@monitall/db";
 
@@ -8,11 +9,7 @@ import { DashboardShell } from "../../components/dashboard-shell";
 import { getOrganizationSubscriptionPlan } from "./actions";
 import { BillingForm } from "./components/billing-form";
 
-export default async function FundsPage(props: {
-  children: React.ReactNode;
-  modal: React.ReactNode;
-  params: { slug: string };
-}) {
+export default async function BillingPage(props: { params: { slug: string } }) {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -20,7 +17,7 @@ export default async function FundsPage(props: {
   }
   const organization = await db.organization.findFirst({
     where: {
-      slug: props.params.slug as string,
+      slug: props.params.slug,
       users: {
         some: {
           userId: user.id,
@@ -60,7 +57,7 @@ export default async function FundsPage(props: {
       />
       <div className="grid gap-8">
         <BillingForm
-          organizationSlug={props.params.slug as string}
+          organizationSlug={props.params.slug}
           subscriptionPlan={{
             ...subscriptionPlan,
             isCanceled,

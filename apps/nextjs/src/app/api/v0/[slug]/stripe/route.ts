@@ -1,7 +1,8 @@
-import { authOptions } from "@monitall/auth";
-import { db } from "@monitall/db";
 import { getServerSession } from "next-auth/next";
 import { z } from "zod";
+
+import { authOptions } from "@monitall/auth";
+import { db } from "@monitall/db";
 
 import { getOrganizationSubscriptionPlan } from "~/app/app/(dashboard)/[slug]/billing/actions";
 import { proPlan } from "~/app/config";
@@ -26,7 +27,7 @@ export async function GET(
 
     const organization = await db.organization.findFirst({
       where: {
-        slug: params.slug as string,
+        slug: params.slug,
         users: {
           some: {
             userId: user.id,
@@ -62,10 +63,10 @@ export async function GET(
       payment_method_types: ["card"],
       mode: "subscription",
       billing_address_collection: "auto",
-      customer_email: user.email,
+      customer_email: user.email || "",
       line_items: [
         {
-          price: proPlan.stripePriceId,
+          price: proPlan.stripePriceId as string,
           quantity: 1,
         },
       ],
@@ -85,6 +86,6 @@ export async function GET(
   }
 }
 
-export function absoluteUrl(path: string) {
+function absoluteUrl(path: string): string {
   return `${process.env.NEXT_PUBLIC_APP_URL}${path}`;
 }
