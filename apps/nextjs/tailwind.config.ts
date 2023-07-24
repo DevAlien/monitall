@@ -1,5 +1,6 @@
-import baseConfig from "@monitall/tailwind-config";
 import type { Config } from "tailwindcss";
+
+import baseConfig from "@monitall/tailwind-config";
 
 export default {
   content: [
@@ -56,16 +57,16 @@ export default {
             inverted: "#030712", // gray-950
           },
           background: {
-            muted: "#131A2B", // custom
+            muted: "var(--muted)", // custom
             subtle: "#1f2937", // gray-800
-            DEFAULT: "#111827", // gray-900
+            DEFAULT: "var(--background)", // gray-900
             emphasis: "#d1d5db", // gray-300
           },
           border: {
-            DEFAULT: "#1f2937", // gray-800
+            DEFAULT: "var(--border)", // gray-800
           },
           ring: {
-            DEFAULT: "#1f2937", // gray-800
+            DEFAULT: "var(--border)", // gray-800
           },
           content: {
             subtle: "#4b5563", // gray-600

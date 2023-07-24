@@ -1,7 +1,8 @@
-import { db } from "@monitall/db";
-import { sendMessage } from "@monitall/queue";
 import { MonitorStatus, MonitorType } from "@prisma/client";
 import { z } from "zod";
+
+import { db } from "@monitall/db";
+import { sendMessage } from "@monitall/queue";
 
 import { getUserAndOrganizationFromSlug } from "~/lib/api";
 import { monitorCreateSchema } from "~/lib/schemas";
@@ -58,21 +59,24 @@ export async function POST(
     });
 
     // TODO: if active
-    const monitorEvent = await db.monitorEvent.create({
-      data: {
-        monitorId: monitor.id,
-        scheduledAt: new Date(),
-        address: monitor.address,
-      },
-    });
+    if (body.status === MonitorStatus.ACTIVE) {
+      const monitorEvent = await db.monitorEvent.create({
+        data: {
+          monitorId: monitor.id,
+          scheduledAt: new Date(),
+          address: monitor.address,
+        },
+      });
 
-    sendMessage(
-      {
-        id: monitorEvent.id,
-        monitorId: monitor.id,
-      },
-      new Date(),
-    );
+      sendMessage(
+        {
+          id: monitorEvent.id,
+          monitorId: monitor.id,
+        },
+        new Date(),
+      );
+    }
+
     return new Response(JSON.stringify(monitor));
   } catch (error) {
     if (error instanceof z.ZodError) {

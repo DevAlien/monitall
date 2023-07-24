@@ -35,6 +35,7 @@ const server = [
   "./src/divider.tsx",
   "./src/form.tsx",
   "./src/table.tsx",
+  "./src/extra/status.tsx",
 ];
 
 export default defineConfig((opts) => {

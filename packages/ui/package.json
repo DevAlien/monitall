@@ -169,6 +169,10 @@
     "./table": {
       "import": "./dist/table.mjs",
       "types": "./dist/table.d.ts"
+    },
+    "./extra/status": {
+      "import": "./dist/extra/status.mjs",
+      "types": "./dist/extra/status.d.ts"
     }
   },
   "typesVersions": {
@@ -253,6 +257,9 @@
       ],
       "date-range-picker": [
         "dist/date-range-picker.d.ts"
+      ],
+      "extra/status": [
+        "dist/extra/status.d.ts"
       ]
     }
   }

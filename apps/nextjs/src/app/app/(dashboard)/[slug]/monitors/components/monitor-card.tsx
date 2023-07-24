@@ -2,13 +2,20 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { MonitorStatus, type Monitor } from "@prisma/client";
+import { Badge, Flex, Text, Title, Tracker, type Color } from "@tremor/react";
+import { type z } from "zod";
+
+import { Card, CardContent } from "@monitall/ui/card";
+import { Status } from "@monitall/ui/extra/status";
 import { Tabs, TabsList, TabsTrigger } from "@monitall/ui/tabs";
-import { Monitor } from "@prisma/client";
-import { Badge, Card, Color, Flex, Text, Title, Tracker } from "@tremor/react";
+import { toast } from "@monitall/ui/use-toast";
 
 import { queryPipe } from "~/utils/tinybird";
 import { useMonitorCardData } from "~/hooks/useMonitorCardData";
 import { useOrganizationSlug } from "~/hooks/useOrganizationSlug";
+import { rpc } from "~/lib/rpc";
+import { type rpcSchemaMonitorStatus } from "~/lib/schemas";
 
 interface Tracker {
   time: string;
@@ -23,9 +30,10 @@ type EventsData = {
 };
 export const MonitorCard = (props: { monitor: Monitor }) => {
   const router = useRouter();
+
   const [tabValue, setTabValue] = useState<string>("h24");
   const organizationSlug = useOrganizationSlug();
-  let data: Tracker[] = [];
+  const data: Tracker[] = [];
   const { data: queryData, loading } = useMonitorCardData(
     organizationSlug as string,
     props.monitor.id,
@@ -70,41 +78,79 @@ export const MonitorCard = (props: { monitor: Monitor }) => {
     console.log(e);
     return <></>;
   }
+  const updateStatus = async (monitorId: number, status: MonitorStatus) => {
+    try {
+      const data: z.infer<typeof rpcSchemaMonitorStatus> = {
+        monitorId: monitorId,
+        status:
+          status === MonitorStatus.ACTIVE
+            ? MonitorStatus.INACTIVE
+            : MonitorStatus.ACTIVE,
+      };
+
+      await rpc(organizationSlug!, {
+        method: "monitor-status",
+        data: data,
+      });
+      return toast({
+        title: data.status === MonitorStatus.ACTIVE ? "Activated" : "Paused",
+        description:
+          data.status === MonitorStatus.ACTIVE
+            ? "Activated sucessfully"
+            : "Paused sucessfully",
+      });
+    } catch (e) {
+      console.log(e);
+      return toast({
+        title: "Something went wrong.",
+        description: "Please refresh the page and try again.",
+        variant: "destructive",
+      });
+    } finally {
+      router.refresh();
+    }
+  };
+
   return (
     <Card
-      className="mx-auto max-w-sm cursor-pointer"
+      className="cursor-pointer"
       onClick={() =>
         router.push(`/${organizationSlug}/monitors/${props.monitor.id}`)
       }
     >
-      <Flex alignItems="start">
-        <div>
-          <Title>{props.monitor.name}</Title>
-          <Text>Home</Text>
+      <CardContent className="pt-6">
+        <div className="flex items-start justify-between">
+          <div>
+            <Title>{props.monitor.name}</Title>
+            <Text>Home</Text>
+          </div>
+          <Status
+            onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+              e.preventDefault();
+              e.stopPropagation();
+              updateStatus(props.monitor.id, props.monitor.status);
+            }}
+            variant={
+              (props.monitor.status === MonitorStatus.INACTIVE && "off") ||
+              "default"
+            }
+          />
         </div>
-        <span className="relative flex h-5 w-5">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
-          <span className="relative inline-flex h-5 w-5 rounded-full bg-primary"></span>
-        </span>
-        {/* <span className="inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75"></span> */}
-        {/* <Badge>{props.monitor.status}</Badge> */}
-      </Flex>
 
-      <Flex>
-        <Flex className="pb-2 pt-2">
+        <div className="flex justify-between pb-2 pt-2">
           <Tabs value={tabValue} onValueChange={setTabValue}>
             <TabsList className="grid grid-cols-2">
               <TabsTrigger value="h24">24h</TabsTrigger>
               <TabsTrigger value="d30">30d</TabsTrigger>
             </TabsList>
           </Tabs>
-          <Flex justifyContent="end" className="mt-4">
+          <div className="mt-4 flex justify-end">
             <Text>Uptime 100%</Text>
-          </Flex>
-        </Flex>
-      </Flex>
+          </div>
+        </div>
 
-      <Tracker data={data} className="mt-2" />
+        <Tracker data={data} className="mt-2" />
+      </CardContent>
     </Card>
   );
 };

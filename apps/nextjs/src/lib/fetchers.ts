@@ -1,5 +1,9 @@
 import { unstable_cache } from "next/cache";
+import { z } from "zod";
+
 import { db as prisma } from "@monitall/db";
+
+import { rpcSchema } from "./schemas";
 
 export async function getSiteData(domain: string) {
   const subdomain = domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)

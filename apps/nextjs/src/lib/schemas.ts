@@ -15,3 +15,13 @@ export const monitorCreateSchema = z.object({
   regions: z.array(z.string()),
   status: z.nativeEnum(MonitorStatus),
 });
+
+export const rpcSchema = z.object({
+  method: z.string(),
+  data: z.any(),
+});
+
+export const rpcSchemaMonitorStatus = z.object({
+  monitorId: z.number(),
+  status: z.nativeEnum(MonitorStatus),
+});

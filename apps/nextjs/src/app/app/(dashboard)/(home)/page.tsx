@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+
 import { getCurrentUser } from "@monitall/auth";
 import { db } from "@monitall/db";
 import { Button } from "@monitall/ui/button";
-import { Organization } from "@prisma/client";
 
 import { getStatusPageLink } from "~/utils/utils";
 import { EmptyPlaceholder } from "~/components/empty-section";
@@ -11,7 +11,7 @@ import { ModalNewOrganization } from "~/components/modal/new-organization";
 import { DashboardHeader } from "~/app/app/(dashboard)/components/dashboard-header";
 import { DashboardShell } from "~/app/app/(dashboard)/components/dashboard-shell";
 
-export default async function FundsPage(props: {
+export default async function HomePage(props: {
   children: React.ReactNode;
   modal: React.ReactNode;
   params: { slug: string };
@@ -45,7 +45,10 @@ export default async function FundsPage(props: {
       {organizations.length > 0 && (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {organizations.map((o) => (
-            <div className="group flex h-full flex-col rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-slate-900 dark:shadow-slate-700/[.7]">
+            <div
+              key={o.id}
+              className="group flex h-full flex-col rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-slate-900 dark:shadow-slate-700/[.7]"
+            >
               <div className="flex h-52 flex-col items-center justify-center rounded-t-xl bg-blue-600">
                 <svg
                   className="h-28 w-28"
@@ -82,7 +85,7 @@ export default async function FundsPage(props: {
               <div className="p-4 md:p-6">
                 <span className="mb-1 block text-xs font-semibold uppercase text-blue-600 dark:text-blue-500">
                   {o.monitors.length > 0
-                    ? o.monitors.length + " checks"
+                    ? String(o.monitors.length) + " checks"
                     : "No status checks"}
                 </span>
                 <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-300 dark:hover:text-white">
