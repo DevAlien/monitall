@@ -1,6 +1,6 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { UserRole } from "@prisma/client";
-import { NextAuthOptions } from "next-auth";
+import { type UserRole } from "@prisma/client";
+import { type NextAuthOptions } from "next-auth";
 import EmailProvider from "next-auth/providers/email";
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
@@ -21,21 +21,22 @@ export const authOptions: NextAuthOptions = {
   },
   providers: [
     GitHubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      clientId: process.env.GITHUB_CLIENT_ID!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
       allowDangerousEmailAccountLinking: true,
     }),
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       allowDangerousEmailAccountLinking: true,
     }),
     EmailProvider({
-      sendVerificationRequest: async ({ identifier, url, provider }) => {
+      sendVerificationRequest: async ({ identifier, url }) => {
         if (process.env.NODE_ENV === "development") {
           console.log(`Login link: ${url}`);
           return;
         } else {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
           sendEmail({
             email: identifier,
             subject: "Your Monitall Login Link",

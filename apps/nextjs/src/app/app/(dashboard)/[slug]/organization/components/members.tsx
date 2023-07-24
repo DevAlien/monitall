@@ -1,6 +1,8 @@
 "use client";
 
-import { FC } from "react";
+import { type FC } from "react";
+import { type Member } from "types";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@monitall/ui/avatar";
 import { Button } from "@monitall/ui/button";
 import {
@@ -19,7 +21,6 @@ import {
   SelectValue,
 } from "@monitall/ui/select";
 import { Separator } from "@monitall/ui/separator";
-import { Member } from "types";
 
 export const Members: FC<{ members: Member[] }> = ({ members }) => {
   return (
@@ -49,7 +50,7 @@ export const Members: FC<{ members: Member[] }> = ({ members }) => {
                 >
                   <div className="flex items-center space-x-4">
                     <Avatar>
-                      <AvatarImage src={member.user.image} />
+                      <AvatarImage src={member.user.image as string} />
                       <AvatarFallback>OM</AvatarFallback>
                     </Avatar>
                     <div>

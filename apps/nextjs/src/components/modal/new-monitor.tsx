@@ -1,20 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { cn } from "@monitall/ui";
+import { useForm } from "react-hook-form";
+import { type z } from "zod";
+
 import { Button } from "@monitall/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@monitall/ui/dialog";
+import { DialogFooter } from "@monitall/ui/dialog";
 import {
   Form,
   FormControl,
@@ -26,7 +19,6 @@ import {
 } from "@monitall/ui/form";
 import { Icons } from "@monitall/ui/icons";
 import { Input } from "@monitall/ui/input";
-import { Label } from "@monitall/ui/label";
 import {
   Select,
   SelectContent,
@@ -35,10 +27,8 @@ import {
   SelectValue,
 } from "@monitall/ui/select";
 import { toast } from "@monitall/ui/use-toast";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 
-import { RegionSelect } from "~/components/form/region-select";
+import { RegionSelect, type Region } from "~/components/form/region-select";
 import { useOrganizationSlug } from "~/hooks/useOrganizationSlug";
 import { monitorCreateSchema } from "~/lib/schemas";
 
@@ -56,8 +46,7 @@ export function ModalNewMonitor() {
   //   const { control, handleSubmit } = form;
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
 
-  const [showNewOrganizationDialog, setShowNewOrganizationDialog] =
-    React.useState(false);
+  const [_, setShowNewOrganizationDialog] = React.useState(false);
 
   async function onSubmit(data: FormData) {
     setIsSaving(true);
@@ -82,8 +71,8 @@ export function ModalNewMonitor() {
       description: "Your organization has been created.",
     });
 
-    const body = await response.json();
-    router.push(`/${slug}/monitors/${body.id}`);
+    const body = (await response.json()) as { id: number };
+    router.push(`/${slug}/monitors/${body?.id.toString()}`);
   }
 
   return (
@@ -137,7 +126,7 @@ export function ModalNewMonitor() {
                   <FormLabel>Interval</FormLabel>
                   <Select
                     onValueChange={(value) => field.onChange(parseInt(value))}
-                    defaultValue={field.value}
+                    defaultValue={field.value.toString()}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -145,9 +134,7 @@ export function ModalNewMonitor() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem type="number" value="120">
-                        120 seconds
-                      </SelectItem>
+                      <SelectItem value="120">120 seconds</SelectItem>
                       <SelectItem value="60">60 seconds</SelectItem>
                       <SelectItem value="30" disabled>
                         30 seconds{" "}
@@ -172,7 +159,7 @@ export function ModalNewMonitor() {
                   <FormLabel>Frameworks</FormLabel>
                   <FormControl>
                     <RegionSelect
-                      value={field.value}
+                      value={field.value as unknown as Region[]}
                       onChange={(values) => {
                         field.onChange(values.map(({ value }) => value));
                       }}

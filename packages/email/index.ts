@@ -1,4 +1,4 @@
-import { JSXElementConstructor, ReactElement } from "react";
+import { type JSXElementConstructor, type ReactElement } from "react";
 import { Resend } from "resend";
 
 import LoginLink from "./emails/login";
@@ -29,5 +29,6 @@ export const sendEmail = async ({
     to: test ? "delivered@resend.dev" : email,
     subject,
     react,
+    text: "",
   });
 };

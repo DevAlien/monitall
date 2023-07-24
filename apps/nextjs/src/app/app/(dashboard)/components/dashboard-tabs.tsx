@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@monitall/ui/tabs";
 
 export interface DashboardTabsTab {
@@ -19,7 +20,7 @@ export interface DashboardTabsProps {
 export function DashboardTabs({ tabs, defaultTab }: DashboardTabsProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams()!;
+  const searchParams = useSearchParams();
 
   const tabsTriggers: React.ReactNode[] = [];
   const tabsContents: React.ReactNode[] = [];

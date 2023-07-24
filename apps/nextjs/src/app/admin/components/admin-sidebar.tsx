@@ -3,7 +3,7 @@ import { cn } from "@monitall/ui";
 import { Button } from "@monitall/ui/button";
 import { BookTemplate, Factory, Users } from "lucide-react";
 
-interface AdminSidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
+type AdminSidebarProps = React.HTMLAttributes<HTMLDivElement>
 
 export function AdminSidebar({ className }: AdminSidebarProps) {
   return (

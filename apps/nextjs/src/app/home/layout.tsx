@@ -1,16 +1,17 @@
 import Link from "next/link";
+
 import { cn } from "@monitall/ui";
 import { buttonVariants } from "@monitall/ui/button";
 import { Icons } from "@monitall/ui/icons";
 
 import { MainNav } from "~/components/nav";
-import { marketingConfig, marketingFeatures, siteConfig } from "~/app/config";
 import { SiteFooter } from "./components/footer";
 
 interface MarketingLayoutProps {
   children: React.ReactNode;
 }
 
+// eslint-disable-next-line @typescript-eslint/require-await
 export default async function MarketingLayout({
   children,
 }: MarketingLayoutProps) {
@@ -21,7 +22,7 @@ export default async function MarketingLayout({
           <Link href="/">
             <Icons.logo className="text-primary" />
           </Link>
-          <MainNav items={marketingConfig.mainNav} />
+          <MainNav />
           <nav>
             <Link
               href={`${process.env.NEXT_PUBLIC_APP_URL}/signin`}

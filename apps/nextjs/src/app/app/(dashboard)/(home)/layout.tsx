@@ -1,6 +1,7 @@
 import { Sidebar } from "~/app/app/(dashboard)/components/sidebar";
 import { homeDashboardNav } from "~/app/config";
 
+// eslint-disable-next-line @typescript-eslint/require-await
 export default async function RootLayout(props: {
   children: React.ReactNode;
   // modal: React.ReactNode;

@@ -6,5 +6,5 @@ export function useOrganizationSlug() {
     return null;
   }
 
-  return params?.slug as string;
+  return params?.slug ;
 }

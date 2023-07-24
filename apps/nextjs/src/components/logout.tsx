@@ -1,15 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { DropdownMenuShortcut } from "@monitall/ui/dropdown-menu";
 import { LogOut } from "lucide-react";
 import { signOut } from "next-auth/react";
+
+import { DropdownMenuShortcut } from "@monitall/ui/dropdown-menu";
 
 export function LogoutMenu() {
   return (
     <Link
       href="#"
       onClick={() => {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         signOut({
           callbackUrl: `${window.location.origin}/signin`,
         });

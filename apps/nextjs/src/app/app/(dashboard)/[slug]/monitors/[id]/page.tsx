@@ -1,13 +1,6 @@
 "use server";
 
 import { notFound } from "next/navigation";
-import {
-  Activity,
-  CreditCard,
-  DollarSign,
-  Download,
-  Users,
-} from "lucide-react";
 
 import { getCurrentUser } from "@monitall/auth";
 import { db } from "@monitall/db";
@@ -36,6 +29,10 @@ export default async function SingleMonitorPage(props: {
       },
     },
   });
+
+  if (!monitor) {
+    return notFound();
+  }
 
   return (
     <DashboardShell>

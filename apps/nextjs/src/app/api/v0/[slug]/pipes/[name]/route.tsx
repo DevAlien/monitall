@@ -1,7 +1,8 @@
-import { db } from "@monitall/db";
 import { z } from "zod";
 
-import { queryPipe, queryPipe2 } from "~/utils/tinybird";
+import { db } from "@monitall/db";
+
+import { queryPipe2 } from "~/utils/tinybird";
 import { ApiError, getUserAndOrganizationFromSlug } from "~/lib/api";
 
 export async function GET(
@@ -15,9 +16,7 @@ export async function GET(
   try {
     const { searchParams } = new URL(req.url);
 
-    const { user, organization } = await getUserAndOrganizationFromSlug(
-      params.slug,
-    );
+    const { organization } = await getUserAndOrganizationFromSlug(params.slug);
     if (searchParams.get("monitor_id")) {
       const monitor = await db.monitor.findFirst({
         where: {

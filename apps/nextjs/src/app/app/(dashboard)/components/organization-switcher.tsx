@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useParams, useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Organization } from "@prisma/client";
+import { type Organization } from "@prisma/client";
 import { Check, ChevronsUpDown, PlusCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -33,13 +33,6 @@ import { Icons } from "@monitall/ui/icons";
 import { Input } from "@monitall/ui/input";
 import { Label } from "@monitall/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@monitall/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@monitall/ui/select";
 import { toast } from "@monitall/ui/use-toast";
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
@@ -101,7 +94,7 @@ export function OrganizationSwitcher({
       description: "Your organization has been created.",
     });
 
-    const body = await response.json();
+    const body = (await response.json()) as { slug: string };
     router.push(`/${body.slug}`);
   }
 
@@ -123,7 +116,7 @@ export function OrganizationSwitcher({
             {selectedOrganization && (
               <Avatar className="mr-2 h-5 w-5">
                 <AvatarImage
-                  src={`https://avatar.vercel.sh/${selectedOrganization?.value}.png`}
+                  src={`https://avatar.vercel.sh/${selectedOrganization?.name}.png`}
                   alt={selectedOrganization?.id}
                 />
                 <AvatarFallback>SC</AvatarFallback>

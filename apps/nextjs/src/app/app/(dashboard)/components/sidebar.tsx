@@ -1,5 +1,5 @@
 import { cn } from "@monitall/ui";
-import { SidebarNavItem } from "types";
+import { type SidebarNavItem } from "types";
 
 import { DashboardNav } from "./nav";
 

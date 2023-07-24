@@ -1,4 +1,4 @@
-import { Icons } from "@monitall/ui/icons";
+import { type Icons } from "@monitall/ui/icons";
 
 import { EmptyPlaceholder } from "~/components/empty-section";
 

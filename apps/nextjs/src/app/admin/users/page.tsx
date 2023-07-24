@@ -15,7 +15,7 @@ export default async function DashboardPage() {
       <div className="mt-8 space-y-8">
         {users.map((u) => {
           return (
-            <div className="flex items-center">
+            <div key={u.id} className="flex items-center">
               <Avatar className="h-9 w-9">
                 {/* <AvatarImage src="/avatars/01.png" alt="Avatar" /> */}
                 <AvatarFallback>{getInitials(u.name || "")}</AvatarFallback>
@@ -34,7 +34,7 @@ export default async function DashboardPage() {
 }
 
 function getInitials(name: string) {
-  let rgx = new RegExp(/(\p{L}{1})\p{L}+/, "gu");
+  const rgx = new RegExp(/(\p{L}{1})\p{L}+/, "gu");
 
   const initialsR = [...name.matchAll(rgx)] || [];
 

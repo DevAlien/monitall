@@ -1,18 +1,17 @@
 "use client";
 
 import * as React from "react";
+import { X } from "lucide-react";
+
 import { Badge } from "@monitall/ui/badge";
 import {
   Command,
   CommandGroup,
-  CommandInput,
   CommandInput2,
   CommandItem,
 } from "@monitall/ui/command";
-import { Command as CommandPrimitive } from "cmdk";
-import { X } from "lucide-react";
 
-type Region = Record<"value" | "label", string>;
+export type Region = Record<"value" | "label", string>;
 
 const REGIONS = [
   {
@@ -126,7 +125,7 @@ export const RegionSelect = ({ value, onChange }: Props) => {
                       e.preventDefault();
                       e.stopPropagation();
                     }}
-                    onSelect={(value) => {
+                    onSelect={() => {
                       setInputValue("");
                       setSelected((prev) => [...prev, region]);
                     }}

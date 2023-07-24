@@ -11,10 +11,10 @@
     "@monitall/db": "^0.1.0",
     "@monitall/email": "^0.1.0",
     "@next-auth/prisma-adapter": "^1.0.6",
-    "next-auth": "^4.22.1"
+    "next-auth": "^4.22.3"
   },
   "devDependencies": {
     "tsx": "^3.12.7",
-    "typescript": "^5.1.0-beta"
+    "typescript": "^5.1.6"
   }
 }

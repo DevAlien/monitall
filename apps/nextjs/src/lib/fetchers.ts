@@ -1,9 +1,6 @@
 import { unstable_cache } from "next/cache";
-import { z } from "zod";
 
 import { db as prisma } from "@monitall/db";
-
-import { rpcSchema } from "./schemas";
 
 export async function getSiteData(domain: string) {
   const subdomain = domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
@@ -12,7 +9,7 @@ export async function getSiteData(domain: string) {
 
   return await unstable_cache(
     async () => {
-      return prisma.organization.findUnique({
+      return prisma.organization.findFirst({
         where: subdomain ? { slug: subdomain } : { customDomain: domain },
       });
     },

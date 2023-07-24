@@ -3,21 +3,22 @@
 import * as React from "react";
 import { useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+
 import { cn } from "@monitall/ui";
 import { buttonVariants } from "@monitall/ui/button";
 import { Icons } from "@monitall/ui/icons";
 import { Input } from "@monitall/ui/input";
 import { Label } from "@monitall/ui/label";
 import { toast } from "@monitall/ui/use-toast";
-import { signIn } from "next-auth/react";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
 
 const userAuthSchema = z.object({
   email: z.string().email(),
 });
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
+type UserAuthFormProps = React.HTMLAttributes<HTMLDivElement>;
 
 type FormData = z.infer<typeof userAuthSchema>;
 
@@ -106,6 +107,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         className={cn(buttonVariants({ variant: "outline" }))}
         onClick={() => {
           setIsGitHubLoading(true);
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
           signIn("github");
         }}
         disabled={isLoading || isGitHubLoading}
@@ -122,6 +124,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         className={cn(buttonVariants({ variant: "outline" }))}
         onClick={() => {
           setIsGoogleLoading(true);
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
           signIn("google");
         }}
         disabled={isLoading || isGoogleLoading}

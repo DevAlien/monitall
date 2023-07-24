@@ -1,9 +1,10 @@
-import { authOptions } from "@monitall/auth";
-import { db } from "@monitall/db";
 import { Role, UserRole } from "@prisma/client";
 import { getServerSession } from "next-auth/next";
 import slugify from "slugify";
 import * as z from "zod";
+
+import { authOptions } from "@monitall/auth";
+import { db } from "@monitall/db";
 
 const organizationCreateSchema = z.object({
   name: z.string(),
@@ -40,7 +41,7 @@ export async function POST(req: Request) {
 
     const { user } = session;
 
-    const json = await req.json();
+    const json: unknown = await req.json();
     const body = organizationCreateSchema.parse(json);
     let slug = slugify(body.name);
     let counter = 0;

@@ -2,7 +2,8 @@ import "@monitall/ui/styles.css";
 import "~/styles/globals.css";
 import "~/styles/style.css";
 import Link from "next/link";
-import { notFound, useRouter } from "next/navigation";
+import { notFound } from "next/navigation";
+
 import { getCurrentUser } from "@monitall/auth";
 import { db } from "@monitall/db";
 import { Icons } from "@monitall/ui/icons";

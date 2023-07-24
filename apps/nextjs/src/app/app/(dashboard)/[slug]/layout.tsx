@@ -4,7 +4,7 @@
 import { notFound } from "next/navigation";
 import { getCurrentUser } from "@monitall/auth";
 import { db } from "@monitall/db";
-import { Organization } from "@prisma/client";
+import { type Organization } from "@prisma/client";
 
 import { dashboardNav } from "~/app/config";
 import { Sidebar } from "../components/sidebar";

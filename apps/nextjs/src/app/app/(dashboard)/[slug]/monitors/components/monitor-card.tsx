@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MonitorStatus, type Monitor } from "@prisma/client";
-import { Badge, Flex, Text, Title, Tracker, type Color } from "@tremor/react";
+import { Text, Title, Tracker, type Color } from "@tremor/react";
 import { type z } from "zod";
 
 import { Card, CardContent } from "@monitall/ui/card";
@@ -11,7 +11,6 @@ import { Status } from "@monitall/ui/extra/status";
 import { Tabs, TabsList, TabsTrigger } from "@monitall/ui/tabs";
 import { toast } from "@monitall/ui/use-toast";
 
-import { queryPipe } from "~/utils/tinybird";
 import { useMonitorCardData } from "~/hooks/useMonitorCardData";
 import { useOrganizationSlug } from "~/hooks/useOrganizationSlug";
 import { rpc } from "~/lib/rpc";
@@ -23,11 +22,6 @@ interface Tracker {
   tooltip: string;
 }
 
-type EventsData = {
-  time: string;
-  value: number;
-  status_code: number;
-};
 export const MonitorCard = (props: { monitor: Monitor }) => {
   const router = useRouter();
 
@@ -88,7 +82,7 @@ export const MonitorCard = (props: { monitor: Monitor }) => {
             : MonitorStatus.ACTIVE,
       };
 
-      await rpc(organizationSlug!, {
+      await rpc(organizationSlug as string, {
         method: "monitor-status",
         data: data,
       });
@@ -115,7 +109,9 @@ export const MonitorCard = (props: { monitor: Monitor }) => {
     <Card
       className="cursor-pointer"
       onClick={() =>
-        router.push(`/${organizationSlug}/monitors/${props.monitor.id}`)
+        router.push(
+          `/${organizationSlug as string}/monitors/${props.monitor.id}`,
+        )
       }
     >
       <CardContent className="pt-6">
@@ -128,6 +124,7 @@ export const MonitorCard = (props: { monitor: Monitor }) => {
             onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
               e.preventDefault();
               e.stopPropagation();
+              // eslint-disable-next-line @typescript-eslint/no-floating-promises
               updateStatus(props.monitor.id, props.monitor.status);
             }}
             variant={

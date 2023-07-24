@@ -1,6 +1,6 @@
 import { type Route } from "next";
 import { Component, Globe } from "lucide-react";
-import { SidebarNavItem, SubscriptionPlan } from "types";
+import { type SidebarNavItem, type SubscriptionPlan } from "types";
 
 import { Icons } from "@monitall/ui/icons";
 
@@ -85,7 +85,7 @@ export const navItems = [
     title: "Admin",
     role: "ADMIN",
   },
-] satisfies { href: Route; title: string }[];
+] satisfies { href: Route; title: string; role?: string }[];
 
 export type NavItem = {
   title: string;

@@ -1,7 +1,7 @@
 import {
-  DomainConfigResponse,
-  DomainResponse,
-  DomainVerificationResponse,
+  type DomainConfigResponse,
+  type DomainResponse,
+  type DomainVerificationResponse,
 } from "types";
 
 export const addDomainToVercel = async (domain: string) => {
@@ -15,7 +15,7 @@ export const addDomainToVercel = async (domain: string) => {
       },
       method: "POST",
     },
-  ).then((res) => res.json());
+  ).then((res) => res.json() as Promise<JSON>);
 };
 
 export const removeDomainFromVercelProject = async (domain: string) => {
@@ -27,7 +27,7 @@ export const removeDomainFromVercelProject = async (domain: string) => {
       },
       method: "DELETE",
     },
-  ).then((res) => res.json());
+  ).then((res) => res.json() as Promise<JSON>);
 };
 
 export const removeDomainFromVercelTeam = async (domain: string) => {
@@ -39,7 +39,7 @@ export const removeDomainFromVercelTeam = async (domain: string) => {
       },
       method: "DELETE",
     },
-  ).then((res) => res.json());
+  ).then((res) => res.json() as Promise<JSON>);
 };
 
 export const getDomainResponse = async (
@@ -55,7 +55,9 @@ export const getDomainResponse = async (
       },
     },
   ).then((res) => {
-    return res.json();
+    return res.json() as Promise<
+      DomainResponse & { error: { code: string; message: string } }
+    >;
   });
 };
 
@@ -71,7 +73,7 @@ export const getConfigResponse = async (
         "Content-Type": "application/json",
       },
     },
-  ).then((res) => res.json());
+  ).then((res) => res.json() as Promise<DomainConfigResponse>);
 };
 
 export const verifyDomain = async (
@@ -86,7 +88,7 @@ export const verifyDomain = async (
         "Content-Type": "application/json",
       },
     },
-  ).then((res) => res.json());
+  ).then((res) => res.json() as Promise<DomainVerificationResponse>);
 };
 
 export const getSubdomain = (name: string, apexName: string) => {

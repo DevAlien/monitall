@@ -38,7 +38,7 @@ export default async function BillingPage(props: { params: { slug: string } }) {
   let isCanceled = false;
   if (subscriptionPlan.isPro && subscriptionPlan.stripeSubscriptionId) {
     const stripePlan = await stripe.subscriptions.retrieve(
-      subscriptionPlan.stripeSubscriptionId,
+      subscriptionPlan.stripeSubscriptionId ,
     );
     isCanceled = stripePlan.cancel_at_period_end;
   }

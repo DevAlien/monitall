@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { DomainVerificationStatusProps } from "types";
+import { type DomainVerificationStatusProps } from "types";
 
 import {
   getConfigResponse,

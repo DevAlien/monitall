@@ -1,17 +1,17 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { authOptions, getCurrentUser } from "@monitall/auth";
-import { db } from "@monitall/db";
 import { Role } from "@prisma/client";
-import { getServerSession } from "next-auth/next";
+
+import { getCurrentUser } from "@monitall/auth";
+import { db } from "@monitall/db";
 
 const ensurePermissions = async (userId: string, organizationId: string) => {
   const member = await db.usersOnOrganizations.findUniqueOrThrow({
     select: { role: true },
     where: {
       userId_organizationId: {
-        userId: userId!,
+        userId: userId,
         organizationId: organizationId,
       },
     },
@@ -43,7 +43,7 @@ export const updateTeamData = async ({
 
   await db.organization.update({
     data: { name },
-    where: { id: organizationId! },
+    where: { id: organizationId },
   });
 
   revalidatePath("/asd");

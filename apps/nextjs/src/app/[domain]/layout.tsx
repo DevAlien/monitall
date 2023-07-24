@@ -1,9 +1,8 @@
-import { ReactNode } from "react";
-import { Metadata } from "next";
+import { type ReactNode } from "react";
+import { type Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { db as prisma } from "@monitall/db";
 
 import { getSiteData } from "~/lib/fetchers";
 

@@ -1,13 +1,14 @@
+import { getServerSession } from "next-auth";
+
 import { authOptions } from "@monitall/auth";
 import { db } from "@monitall/db";
-import { getServerSession } from "next-auth";
 
 export class ApiError extends Error {
   statusCode = 400;
 
   constructor(message: string, statusCode: number) {
     super(message);
-
+    this.statusCode = statusCode;
     // 👇️ because we are extending a built-in class
     Object.setPrototypeOf(this, ApiError.prototype);
   }

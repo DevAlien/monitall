@@ -41,7 +41,7 @@ export default async function MonitorsPage(props: {
   return (
     <DashboardShell>
       <DashboardHeader heading="Monitors" text="Edit or create a new mo.">
-        <Link href={`/${props.params.slug}/monitors/new`}>
+        <Link href={{ pathname: `/${props.params.slug}/monitors/new` }}>
           <Button>New monitor</Button>
         </Link>
       </DashboardHeader>
@@ -53,7 +53,7 @@ export default async function MonitorsPage(props: {
           title="Create your first monitor"
           description="You don't have any monitors yet. Start creating one."
         >
-          <Link href={`/${props.params.slug}/monitors/new`}>
+          <Link href={{ pathname: `/${props.params.slug}/monitors/new` }}>
             <Button>New monitor</Button>
           </Link>
         </DashboardEmpty>

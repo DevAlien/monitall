@@ -53,9 +53,9 @@ export function BillingForm({
     // type StripeSessionResponse = {
     //   url?: string;
     // };
-    const responseBody = await response.json();
+    const responseBody = (await response.json()) as { url?: string };
     if (responseBody) {
-      window.location.href = responseBody.url as string;
+      window.location.href = responseBody?.url as string;
     }
   }
 

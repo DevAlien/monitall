@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
 import { Button } from "@monitall/ui/button";
 import { ButtonGroup, ButtonGroupButton } from "@monitall/ui/button-group";
 import {
@@ -16,16 +19,7 @@ import {
 import { Icons } from "@monitall/ui/icons";
 import { Input } from "@monitall/ui/input";
 import { Label } from "@monitall/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@monitall/ui/select";
 import { toast } from "@monitall/ui/use-toast";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 const organizationPatchSchema = z.object({
   name: z.string().min(3).max(128),
@@ -65,7 +59,7 @@ export function CreateOrganization() {
       description: "Your organization has been created.",
     });
 
-    const body = await response.json();
+    const body = (await response.json()) as { slug: string };
     router.push(`/${body.slug}`);
 
     return;

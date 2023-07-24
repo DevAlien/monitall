@@ -146,6 +146,7 @@ enum MonitorEventStatus {
   PENDING
   RUNNING
   FINISHED
+  CANCELLED
 }
 
 enum MonitorEventResult {

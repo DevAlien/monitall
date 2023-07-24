@@ -43,7 +43,7 @@ export async function POST(
       params.slug,
     );
 
-    const json = await req.json();
+    const json: unknown = await req.json();
     const body = monitorCreateSchema.parse(json);
     const monitor = await db.monitor.create({
       data: {

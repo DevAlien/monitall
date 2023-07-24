@@ -1,4 +1,5 @@
-import { type Organization, type UsersOnOrganizations } from "@monitall/db";
+import { type Organization, type UsersOnOrganizations } from "@prisma/client";
+
 import { type Icons } from "@monitall/ui/icons";
 
 export type NavItem = {

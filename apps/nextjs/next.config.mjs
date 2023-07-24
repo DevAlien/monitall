@@ -10,7 +10,6 @@ const config = {
   experimental: {
     appDir: true,
     mdxRs: true,
-    typedRoutes: true,
     serverActions: true,
     serverComponentsExternalPackages: ["@prisma/client"],
   },

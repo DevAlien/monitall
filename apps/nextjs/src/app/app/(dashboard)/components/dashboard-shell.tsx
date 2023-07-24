@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn } from "@monitall/ui";
 
-interface DashboardShellProps extends React.HTMLAttributes<HTMLDivElement> {}
+type DashboardShellProps = React.HTMLAttributes<HTMLDivElement>
 
 export function DashboardShell({
   children,

@@ -7,6 +7,7 @@ import { MobileDropdown } from "~/components/mobile-nav";
 import { UserNav } from "~/components/user-nav";
 import { MainNav } from "~/app/app/(dashboard)/components/main-nav";
 
+// eslint-disable-next-line @typescript-eslint/require-await
 export default async function Home() {
   return (
     <>

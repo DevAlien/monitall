@@ -21,7 +21,7 @@ export async function POST(
       params.slug,
     );
 
-    const json = await req.json();
+    const json: unknown = await req.json();
     const body = rpcSchema.parse(json);
     switch (body.method) {
       case "monitor-status":

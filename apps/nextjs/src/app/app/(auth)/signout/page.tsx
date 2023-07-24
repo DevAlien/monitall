@@ -1,7 +1,8 @@
 "use client";
 
-import { Button } from "@monitall/ui/button";
 import { signOut } from "next-auth/react";
+
+import { Button } from "@monitall/ui/button";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -15,7 +16,8 @@ export default function AuthenticationPage() {
           Are you sure you want to sign out?
         </p>
         <Button
-          onClick={async () => {
+          onClick={() => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             signOut({
               callbackUrl: `${window.location.origin}/signin`,
             });

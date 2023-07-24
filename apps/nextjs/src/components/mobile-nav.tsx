@@ -3,6 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
 import { cn } from "@monitall/ui";
 import { Button } from "@monitall/ui/button";
 import { Icons } from "@monitall/ui/icons";
@@ -18,9 +19,6 @@ export function MobileDropdown() {
   const items = slug ? dashboardNav : homeDashboardNav;
   const [isOpen, setIsOpen] = React.useState(false);
   const path = usePathname();
-  if (!items?.length) {
-    return null;
-  }
 
   React.useEffect(() => {
     if (isOpen) {
@@ -30,6 +28,9 @@ export function MobileDropdown() {
     }
   }, [isOpen]);
 
+  if (!items?.length) {
+    return null;
+  }
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
@@ -49,24 +50,26 @@ export function MobileDropdown() {
             if ("separator" in item) {
               return (
                 <h2
-                  key={"i" + index}
+                  key={"i" + index.toString()}
                   className="mb-2 mt-6 px-6 text-lg font-semibold tracking-tight"
                 >
                   {item.title}
                 </h2>
               );
             }
-            const dashbboardHref = slug ? "/" + slug + item.href : item.href;
+            const dashboardHref = slug
+              ? "/" + (slug || "") + (item.href || "")
+              : item.href;
             return (
               item.href && (
                 <Link
-                  key={"i" + index}
-                  href={item.disabled ? "/" : dashbboardHref}
+                  key={"i" + index.toString()}
+                  href={item.disabled ? "/" : (dashboardHref as string)}
                 >
                   <span
                     className={cn(
                       "group flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
-                      path === dashbboardHref ? "bg-accent" : "transparent",
+                      path === dashboardHref ? "bg-accent" : "transparent",
                       item.disabled && "cursor-not-allowed opacity-80",
                     )}
                   >

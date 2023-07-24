@@ -1,9 +1,9 @@
 import {
-  ClientResponse,
-  PipeParams,
   QueryError,
-  QueryPipe,
-  QuerySQL,
+  type ClientResponse,
+  type PipeParams,
+  type QueryPipe,
+  type QuerySQL,
 } from "../../types/tinybird";
 
 export function getConfig() {
@@ -55,7 +55,7 @@ export function queryPipe<T>(
   const searchParams = new URLSearchParams();
   Object.entries(params).forEach(([key, value]) => {
     if (!value) return;
-    searchParams.set(key, value);
+    searchParams.set(key, value as string);
   });
 
   return client(`/pipes/${name}.json?${searchParams}`);

@@ -1,9 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { ReactNode } from "react";
+import { type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
 import { Button } from "@monitall/ui/button";
 import {
   Dialog,
@@ -18,8 +21,6 @@ import { Icons } from "@monitall/ui/icons";
 import { Input } from "@monitall/ui/input";
 import { Label } from "@monitall/ui/label";
 import { toast } from "@monitall/ui/use-toast";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 interface OrganizationSwitcherProps {
   children: ReactNode;
@@ -70,7 +71,7 @@ export function ModalNewOrganization({ children }: OrganizationSwitcherProps) {
       description: "Your organization has been created.",
     });
 
-    const body = await response.json();
+    const body = (await response.json()) as { slug: number };
     router.push(`/${body.slug}`);
   }
 

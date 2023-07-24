@@ -1,5 +1,5 @@
-import dynamic from "next/dynamic";
 import Link from "next/link";
+
 import { cn } from "@monitall/ui";
 import { Icons } from "@monitall/ui/icons";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import { type FC } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@monitall/ui/button";
@@ -15,7 +15,7 @@ import {
   FormMessage,
 } from "@monitall/ui/form";
 import { Input } from "@monitall/ui/input";
-import { Organization } from "@prisma/client";
+import { type Organization } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
