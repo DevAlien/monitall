@@ -64,9 +64,10 @@ type Monitor struct {
 type MonitorEventStatus string
 
 const (
-	Pending  MonitorEventStatus = "PENDING"
-	Running  MonitorEventStatus = "RUNNING"
-	Finished MonitorEventStatus = "FINISHED"
+	Pending   MonitorEventStatus = "PENDING"
+	Running   MonitorEventStatus = "RUNNING"
+	Finished  MonitorEventStatus = "FINISHED"
+	Cancelled MonitorEventStatus = "CANCELLED"
 )
 
 type MonitorEventResult string
@@ -91,6 +92,19 @@ type MonitorEvent struct {
 	UpdatedAt   time.Time
 	MonitorID   int
 	Address     string
+}
+
+type TinyMonitorEvent struct {
+	Timestamp      *time.Time `json:"timestamp"`
+	DNS            int        `json:"dns"`
+	TCP            int        `json:"tcp"`
+	TLS            int        `json:"tls"`
+	Processing     int        `json:"processing"`
+	Region         string     `json:"region"`
+	StatusCode     int        `json:"status_code"`
+	MonitorID      int        `json:"monitor_id"`
+	MonitorEventID int        `json:"monitor_event_id"`
+	Body           string     `json:"body"`
 }
 
 var db *pg.DB
@@ -143,9 +157,9 @@ func handleMessage(message *events.SQSMessage) {
 	_, err = db.QueryOne(&monitorEvent, "SELECT * from monitor_events where id = ?", body.ID)
 	if err != nil {
 
-		fmt.Printf("Model1a: %v\n", err)
+		fmt.Printf("monitora: %v\n", err)
 	}
-	if monitorEvent.ID == 0 {
+	if monitorEvent.ID == 0 || monitorEvent.Status != Cancelled {
 		_, err = sqsSvc.DeleteMessage(&sqs.DeleteMessageInput{
 			QueueUrl:      aws.String(os.Getenv("SQS_QUEUE")),
 			ReceiptHandle: &message.ReceiptHandle,
@@ -166,13 +180,13 @@ func handleMessage(message *events.SQSMessage) {
 		fmt.Printf("Updating err: %v\n", err)
 	}
 
-	var model1 Monitor
-	_, err = db.QueryOne(&model1, "SELECT * from monitors where id = ?", body.MonitorID)
+	var monitor Monitor
+	_, err = db.QueryOne(&monitor, "SELECT * from monitors where id = ?", body.MonitorID)
 	if err != nil {
 
-		fmt.Printf("Model1b: %v\n", err)
+		fmt.Printf("monitorb: %v\n", err)
 	}
-	if model1.ID == 0 || model1.Status != "ACTIVE" {
+	if monitor.ID == 0 || monitor.Status != "ACTIVE" {
 		_, err = sqsSvc.DeleteMessage(&sqs.DeleteMessageInput{
 			QueueUrl:      aws.String(os.Getenv("SQS_QUEUE")),
 			ReceiptHandle: &message.ReceiptHandle,
@@ -180,7 +194,7 @@ func handleMessage(message *events.SQSMessage) {
 		return
 	}
 
-	fmt.Printf("Model1c: %v\n", model1)
+	fmt.Printf("monitorc: %v\n", monitor)
 	var wg sync.WaitGroup
 	regions := []string{"eu-central-1", "us-east-1", "us-west-2"} //, "us-west-1", "us-west-2"}
 
@@ -192,15 +206,29 @@ func handleMessage(message *events.SQSMessage) {
 	}
 	fmt.Println("dbRegions", dbRegions)
 	fmt.Println("dbRegions", len(dbRegions))
+	dataChan := make(chan []byte, len(dbRegions))
 	wg.Add(len(dbRegions))
 	for _, region := range dbRegions {
-		go callTracer(&wg, region, monitorEvent.ID) //traceHttp(&wg, region, model1.Address, model1.ID, monitorEvent.ID, startTime)
+		go callTracer(&wg, dataChan, region, monitorEvent.ID) //traceHttp(&wg, region, monitor.Address, monitor.ID, monitorEvent.ID, startTime)
 	}
 
 	fmt.Println("Waiting for goroutines to finish...")
 	wg.Wait()
+
 	fmt.Println("FINISHED")
-	fmt.Println(body)
+	for s := range dataChan {
+		// unmartshal s with TinyMonitorEvent
+		var tinyMonitorEvent TinyMonitorEvent
+		err := json.Unmarshal(s, &tinyMonitorEvent)
+		if err != nil {
+			fmt.Printf("error unmarshalling: %v\n", err)
+		}
+
+		if tinyMonitorEvent.StatusCode < 200 || tinyMonitorEvent.StatusCode > 299 {
+			//create inncident
+
+		}
+	}
 
 	endTime := time.Now()
 	monitorEvent.EndTime = &endTime
@@ -232,8 +260,8 @@ func handleMessage(message *events.SQSMessage) {
 
 	fmt.Println("FINISHED REAL")
 	fmt.Println(monitorEvent.ScheduledAt)
-	fmt.Println(model1.Interval)
-	scheduledAt := monitorEvent.ScheduledAt.Add(time.Duration(model1.Interval) * time.Second)
+	fmt.Println(monitor.Interval)
+	scheduledAt := monitorEvent.ScheduledAt.Add(time.Duration(monitor.Interval) * time.Second)
 	fmt.Println(scheduledAt)
 	newMonitorEvent := &MonitorEvent{
 		ScheduledAt: &scheduledAt,
@@ -267,7 +295,7 @@ func handleMessage(message *events.SQSMessage) {
 	}
 }
 
-func callTracer(wg *sync.WaitGroup, region Region, monitorEventID int) {
+func callTracer(wg *sync.WaitGroup, ch chan []byte, region Region, monitorEventID int) {
 	defer wg.Done()
 
 	res, err := http.Get(fmt.Sprintf("%s?monitor_event_id=%d", region.Address, monitorEventID))
@@ -277,8 +305,13 @@ func callTracer(wg *sync.WaitGroup, region Region, monitorEventID int) {
 	}
 
 	defer res.Body.Close()
+
 	body, err := ioutil.ReadAll(res.Body)
-	fmt.Println(string(body))
+	if err != nil {
+		fmt.Printf("error transforming request: %s\n", err)
+		return
+	}
+	ch <- body
 }
 
 func main() {

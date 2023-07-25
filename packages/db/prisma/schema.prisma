@@ -1,28 +1,28 @@
 generator client {
-    provider     = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider     = "postgresql"
-    url          = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Account {
-  id                String   @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?  @db.Text
+  id                       String   @id @default(cuid())
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String?  @db.Text
   refresh_token_expires_in Int?
-  access_token      String?  @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?  @db.Text
-  session_state     String?
-  createdAt         DateTime @default(now()) @map(name: "created_at")
-  updatedAt         DateTime @default(now()) @map(name: "updated_at")
+  access_token             String?  @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String?  @db.Text
+  session_state            String?
+  createdAt                DateTime @default(now()) @map(name: "created_at")
+  updatedAt                DateTime @default(now()) @map(name: "updated_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -36,7 +36,7 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@map(name: "sessions")
 }
 
@@ -55,14 +55,17 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
-  role UserRole @default(USER)
+  role          UserRole  @default(USER)
   createdAt     DateTime  @default(now()) @map(name: "created_at")
   updatedAt     DateTime  @default(now()) @map(name: "updated_at")
 
-  accounts Account[]
-  sessions Session[]
-  organizations UsersOnOrganizations[]
-  monitors Monitor[]
+  accounts       Account[]
+  sessions       Session[]
+  organizations  UsersOnOrganizations[]
+  monitors       Monitor[]
+  ackedIncidents Incident[]
+  ApiKey         ApiKey[]
+
   @@map(name: "users")
 }
 
@@ -71,36 +74,38 @@ enum UserRole {
   ADMIN
 }
 
-
 model Organization {
-  id        String   @id @default(cuid())
-  name     String
-  slug String @unique
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @default(now()) @map(name: "updated_at")
-  authorId  String  @map(name: "author_id")
-  subdomain     String?
-  customDomain  String?
-  logo     String?
-  description String?
+  id                     String    @id @default(cuid())
+  name                   String
+  slug                   String    @unique
+  createdAt              DateTime  @default(now()) @map(name: "created_at")
+  updatedAt              DateTime  @default(now()) @map(name: "updated_at")
+  authorId               String    @map(name: "author_id")
+  inviteToken            String   @unique @map(name: "invite_token")
+  subdomain              String?
+  customDomain           String?
+  logo                   String?
+  description            String?
   stripeCustomerId       String?   @unique @map(name: "stripe_customer_id")
   stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id")
   stripePriceId          String?   @map(name: "stripe_price_id")
   stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end")
 
-  users UsersOnOrganizations[]
+  users    UsersOnOrganizations[]
   monitors Monitor[]
+  ApiKey   ApiKey[]
+
   @@map(name: "organizations")
 }
 
 model UsersOnOrganizations {
-  user       User     @relation(fields: [userId], references: [id])
-  userId     String  @map(name: "user_id")
+  user           User         @relation(fields: [userId], references: [id])
+  userId         String       @map(name: "user_id")
   organization   Organization @relation(fields: [organizationId], references: [id])
-  organizationId String  @map(name: "organization_id")
-  role       Role
-  assignedAt DateTime @default(now())  @map(name: "assigned_at")
-  assignedBy String  @map(name: "assigned_by")
+  organizationId String       @map(name: "organization_id")
+  role           Role
+  assignedAt     DateTime     @default(now()) @map(name: "assigned_at")
+  assignedBy     String?       @map(name: "assigned_by")
 
   @@id([userId, organizationId])
   @@map(name: "users_organizations")
@@ -120,24 +125,26 @@ enum MonitorStatus {
   ACTIVE
   INACTIVE
 }
-model Monitor {
-  id        Int   @id @default(autoincrement())
-  name     String
-  type    MonitorType
-  address String
-  interval Int @default(60)
-  region String[]
-  status MonitorStatus @default(ACTIVE)
-  lastExecutedAt DateTime?  @map(name: "last_executed_at")
 
-  user       User     @relation(fields: [createdBy], references: [id])
-  createdBy     String  @map(name: "created_by")
+model Monitor {
+  id             Int           @id @default(autoincrement())
+  name           String
+  type           MonitorType
+  address        String
+  interval       Int           @default(60)
+  region         String[]
+  status         MonitorStatus @default(ACTIVE)
+  lastExecutedAt DateTime?     @map(name: "last_executed_at")
+
+  user           User         @relation(fields: [createdBy], references: [id])
+  createdBy      String       @map(name: "created_by")
   Organization   Organization @relation(fields: [organizationId], references: [id])
-  organizationId String  @map(name: "organization_id")
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @default(now()) @map(name: "updated_at")
+  organizationId String       @map(name: "organization_id")
+  createdAt      DateTime     @default(now()) @map(name: "created_at")
+  updatedAt      DateTime     @default(now()) @map(name: "updated_at")
 
   MonitorEvents MonitorEvent[]
+  Incident      Incident[]
 
   @@map(name: "monitors")
 }
@@ -155,35 +162,102 @@ enum MonitorEventResult {
 }
 
 model MonitorEvent {
-  id        Int   @id @default(autoincrement())
-  scheduledAt DateTime?  @map(name: "scheduled_at")
-  startTime DateTime?  @map(name: "start_time")
-  endTime DateTime?  @map(name: "end_time")
-  address String?
-  duration Int?
-  status MonitorEventStatus @default(PENDING)
-  result MonitorEventResult?
-  average Int?
-  min Int?
-  max Int?
+  id          Int                 @id @default(autoincrement())
+  scheduledAt DateTime?           @map(name: "scheduled_at")
+  startTime   DateTime?           @map(name: "start_time")
+  endTime     DateTime?           @map(name: "end_time")
+  address     String?
+  duration    Int?
+  status      MonitorEventStatus  @default(PENDING)
+  result      MonitorEventResult?
+  average     Int?
+  min         Int?
+  max         Int?
+  manual      Boolean             @default(false)
+  createdAt   DateTime            @default(now()) @map(name: "created_at")
+  updatedAt   DateTime            @default(now()) @map(name: "updated_at")
 
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @default(now()) @map(name: "updated_at")
-
-  Monitor Monitor @relation(fields: [monitorId], references: [id])
-  monitorId Int  @map(name: "monitor_id")
+  Monitor   Monitor @relation(fields: [monitorId], references: [id])
+  monitorId Int     @map(name: "monitor_id")
 
   @@map(name: "monitor_events")
 }
 
 model Region {
-  id        Int   @id @default(autoincrement())
-  name String
-  key String
+  id          Int      @id @default(autoincrement())
+  name        String
+  key         String
   description String?
-  address String?
+  address     String?
+  createdAt   DateTime @default(now()) @map(name: "created_at")
+  updatedAt   DateTime @default(now()) @map(name: "updated_at")
+
+  @@map(name: "regions")
+}
+
+enum IncidentStatus {
+  UNRESOLVED
+  ACKNOWLEDGED
+  RESOLVED
+}
+
+model Incident {
+  id        Int       @id @default(autoincrement())
+  startTime DateTime? @map(name: "start_time")
+  endTime   DateTime? @map(name: "end_time")
+  duration  Int?
+  cause     String?
+
+  user          User?   @relation(fields: [acknowedgedBy], references: [id])
+  acknowedgedBy String? @map(name: "acknowedged_by")
+
+  status IncidentStatus @default(UNRESOLVED)
+
   createdAt DateTime @default(now()) @map(name: "created_at")
   updatedAt DateTime @default(now()) @map(name: "updated_at")
 
-  @@map(name: "regions")
+  Monitor          Monitor            @relation(fields: [monitorId], references: [id])
+  monitorId        Int                @map(name: "monitor_id")
+  IncidentActivity IncidentActivity[]
+
+  @@map(name: "incidents")
+}
+
+model IncidentActivity {
+  id   Int                  @id @default(autoincrement())
+  type IncidentActivityType
+  data Json
+
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @default(now()) @map(name: "updated_at")
+
+  Incident   Incident @relation(fields: [incidentId], references: [id])
+  incidentId Int      @map(name: "incident_id")
+
+  @@map(name: "incident_activities")
+}
+
+enum IncidentActivityType {
+  MONITOR
+  EMAIL
+  SMS
+  CALL
+  SLACK
+  COMMENT
+  EMAIL_OPENED
+}
+
+model ApiKey {
+  id        String    @id @default(cuid())
+  expiresAt DateTime?
+  key       String    @unique
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @default(now()) @map(name: "updated_at")
+
+  user           User         @relation(fields: [userId], references: [id])
+  userId         String       @map(name: "user_id")
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String       @map(name: "organization_id")
+
+  @@map(name: "api_keys")
 }

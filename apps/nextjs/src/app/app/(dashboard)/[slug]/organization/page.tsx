@@ -29,7 +29,12 @@ export default async function OrganizationPage(props: {
     },
     include: {
       users: {
-        include: {
+        select: {
+          userId: true,
+          role: true,
+          organizationId: true,
+          assignedAt: true,
+          assignedBy: true,
           user: {
             select: {
               name: true,
@@ -58,7 +63,14 @@ export default async function OrganizationPage(props: {
         text="Manage your organization and its members"
       />
       <EditOrganizationDetails organization={organization as Organization} />
-      <Members members={organization.users} />
+      <Members
+        members={organization.users}
+        inviteToken={organization.inviteToken}
+        isOwner={
+          organization.users.find((u) => u.userId === user.id.toString())
+            ?.role === "OWNER"
+        }
+      />
     </DashboardShell>
   );
 }

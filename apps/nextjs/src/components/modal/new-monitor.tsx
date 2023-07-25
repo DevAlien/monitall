@@ -46,8 +46,6 @@ export function ModalNewMonitor() {
   //   const { control, handleSubmit } = form;
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
 
-  const [_, setShowNewOrganizationDialog] = React.useState(false);
-
   async function onSubmit(data: FormData) {
     setIsSaving(true);
     const response = await fetch(`/api/v0/${slug}/monitors`, {
@@ -96,7 +94,7 @@ export function ModalNewMonitor() {
                     <Input placeholder="Acme Home" {...field} />
                   </FormControl>
                   <FormDescription>
-                    This is the name of your status mo.
+                    This is the name of your status monitors
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -126,7 +124,7 @@ export function ModalNewMonitor() {
                   <FormLabel>Interval</FormLabel>
                   <Select
                     onValueChange={(value) => field.onChange(parseInt(value))}
-                    defaultValue={field.value.toString()}
+                    defaultValue={field.value?.toString()}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -173,10 +171,7 @@ export function ModalNewMonitor() {
           </div>
         </div>
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => setShowNewOrganizationDialog(false)}
-          >
+          <Button type="button" variant="outline" onClick={() => router.back()}>
             Cancel
           </Button>
           <Button type="submit">

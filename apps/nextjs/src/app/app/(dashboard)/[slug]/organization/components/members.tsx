@@ -22,7 +22,11 @@ import {
 } from "@monitall/ui/select";
 import { Separator } from "@monitall/ui/separator";
 
-export const Members: FC<{ members: Member[] }> = ({ members }) => {
+export const Members: FC<{
+  members: Member[];
+  inviteToken: string;
+  isOwner: boolean;
+}> = ({ members, inviteToken, isOwner }) => {
   return (
     <Card className="my-6">
       <CardHeader>
@@ -33,7 +37,14 @@ export const Members: FC<{ members: Member[] }> = ({ members }) => {
       </CardHeader>
       <CardContent>
         <div className="flex space-x-2">
-          <Input value="http://example.com/invite/989nidu8d" readOnly />
+          <Input
+            value={
+              (process.env.NEXT_PUBLIC_APP_URL as string) +
+              "/invite/" +
+              inviteToken
+            }
+            readOnly
+          />
           <Button variant="secondary" className="shrink-0">
             Copy Link
           </Button>
@@ -62,13 +73,17 @@ export const Members: FC<{ members: Member[] }> = ({ members }) => {
                       </p>
                     </div>
                   </div>
-                  <Select defaultValue={member.role}>
+                  <Select
+                    defaultValue={member.role}
+                    disabled={!isOwner || member.role === "OWNER"}
+                  >
                     <SelectTrigger className="ml-auto w-[110px]">
                       <SelectValue placeholder="Select" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="OWNER">Owner</SelectItem>
                       <SelectItem value="ADMIN">Admin</SelectItem>
+                      <SelectItem value="MEMBER">Member</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

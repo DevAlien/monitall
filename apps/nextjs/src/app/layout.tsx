@@ -12,7 +12,7 @@ import "~/styles/style.css";
 
 const fontSans = Inter({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-sans",
 });
 const fontCal = LocalFont({
   src: "../styles/calsans.ttf",
@@ -26,9 +26,9 @@ export default function RootLayout(props: { children: React.ReactNode }) {
         <body
           className={cn(
             "min-h-screen antialiased",
-            fontSans.className,
             fontSans.variable,
             fontCal.variable,
+            "font-sans",
           )}
         >
           <ThemeProvider attribute="class" defaultTheme="light">

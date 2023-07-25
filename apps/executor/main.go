@@ -61,6 +61,7 @@ type TinyMonitorEvent struct {
 	StatusCode     int        `json:"status_code"`
 	MonitorID      int        `json:"monitor_id"`
 	MonitorEventID int        `json:"monitor_event_id"`
+	Body           string     `json:"body"`
 }
 
 var db *pg.DB
@@ -133,9 +134,21 @@ func traceHttp(url string, monitorID int, monitorEventID int, timestamp time.Tim
 	if err != nil {
 		log.Fatal(err)
 	}
-	if _, err := io.Copy(ioutil.Discard, res.Body); err != nil {
-		log.Fatal(err)
+
+	body := ""
+	// maybe we should store a valid statusCode in the monitor record?
+	if res.StatusCode < 200 || res.StatusCode >= 300 {
+		b, err := io.ReadAll(res.Body)
+		body = string(b)
+		if err != nil {
+			log.Fatalln(err)
+		}
+	} else {
+		if _, err := io.Copy(ioutil.Discard, res.Body); err != nil {
+			log.Fatal(err)
+		}
 	}
+
 	res.Body.Close()
 	timest := time.Now()
 	tinyMonitorEvent := &TinyMonitorEvent{
@@ -148,6 +161,7 @@ func traceHttp(url string, monitorID int, monitorEventID int, timestamp time.Tim
 		TLS:            int(result.TLSHandshake / time.Millisecond),
 		Processing:     int(result.ServerProcessing / time.Millisecond),
 		StatusCode:     res.StatusCode,
+		Body:           body,
 	}
 	// var jsonStr = []byte(`{"timestamp":"2022-10-27T11:43:02.099Z","transaction_id":"8d1e1533-6071-4b10-9cda-b8429c1c7a67","name":"Bobby Drake","email":"bobby.drake@pressure.io","age":42,"passport_number":3847665,"flight_from":"Barcelona","flight_to":"London","extra_bags":1,"flight_class":"economy","priority_boarding":false,"meal_choice":"vegetarian","seat_number":"15D","airline":"Red Balloon"}`)
 	jso, err := json.Marshal(&tinyMonitorEvent)

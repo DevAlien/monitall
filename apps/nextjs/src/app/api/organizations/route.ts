@@ -6,6 +6,8 @@ import * as z from "zod";
 import { authOptions } from "@monitall/auth";
 import { db } from "@monitall/db";
 
+import { genKey } from "~/utils/utils";
+
 const organizationCreateSchema = z.object({
   name: z.string(),
   description: z.string(),
@@ -60,6 +62,7 @@ export async function POST(req: Request) {
         description: body.description,
         slug: slug,
         authorId: user.id,
+        inviteToken: genKey(16),
         users: {
           create: {
             user: {

@@ -3,6 +3,10 @@
 import { type FC } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { type Organization } from "@prisma/client";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+
 import { Button } from "@monitall/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@monitall/ui/card";
 import {
@@ -15,9 +19,6 @@ import {
   FormMessage,
 } from "@monitall/ui/form";
 import { Input } from "@monitall/ui/input";
-import { type Organization } from "@prisma/client";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
 
 import { updateTeamData } from "../actions";
 
@@ -49,7 +50,7 @@ const EditOrganizationDetails: FC<{ organization: Organization }> = ({
           render={({ field }) => (
             <Card>
               <CardHeader className="pb-4">
-                <FormLabel>Team Name</FormLabel>
+                <FormLabel>Name</FormLabel>
                 <FormDescription>
                   This is your organization&apos;s visible name within. For
                   example, the name of your company or department.

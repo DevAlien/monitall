@@ -12,3 +12,9 @@ export function getStatusPageLink(
   }
   return getSubdomain(slug);
 }
+
+export const genKey = (length: number) => {
+  return Array.from({ length }, () =>
+    ((Math.random() * 36) | 0).toString(36),
+  ).join("");
+};

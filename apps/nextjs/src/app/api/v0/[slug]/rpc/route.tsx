@@ -1,4 +1,8 @@
-import { MonitorStatus, type Organization } from "@prisma/client";
+import {
+  MonitorEventStatus,
+  MonitorStatus,
+  type Organization,
+} from "@prisma/client";
 import { type SessionUser } from "types/next-auth";
 import { z } from "zod";
 
@@ -62,6 +66,16 @@ async function setMonitorStatus(
   }
   if (data.status === MonitorStatus.ACTIVE) {
     // TODO: maybe use a transaction here? return await prisma.$transaction(async (tx) => {
+    await db.monitorEvent.updateMany({
+      where: {
+        monitorId: monitor.id,
+        status: MonitorEventStatus.PENDING,
+      },
+      data: {
+        status: MonitorEventStatus.CANCELLED as MonitorEventStatus,
+      },
+    });
+
     const monitorEvent = await db.monitorEvent.create({
       data: {
         monitorId: monitor.id,

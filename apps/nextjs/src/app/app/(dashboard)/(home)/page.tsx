@@ -43,9 +43,9 @@ export default async function HomePage() {
           {organizations.map((o) => (
             <div
               key={o.id}
-              className="group flex h-full flex-col rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-slate-900 dark:shadow-slate-700/[.7]"
+              className="group flex h-full flex-col rounded-xl border border-input bg-card shadow-sm"
             >
-              <div className="flex h-52 flex-col items-center justify-center rounded-t-xl bg-blue-600">
+              {/* <div className="flex h-52 flex-col items-center justify-center rounded-t-xl bg-blue-600">
                 <svg
                   className="h-28 w-28"
                   width="56"
@@ -77,28 +77,26 @@ export default async function HomePage() {
                     </linearGradient>
                   </defs>
                 </svg>
-              </div>
+              </div> */}
               <div className="p-4 md:p-6">
-                <span className="mb-1 block text-xs font-semibold uppercase text-blue-600 dark:text-blue-500">
+                <span className="mb-1 block text-xs font-semibold uppercase text-primary">
                   {o.monitors.length > 0
                     ? String(o.monitors.length) + " checks"
                     : "No status checks"}
                 </span>
-                <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-300 dark:hover:text-white">
-                  {o.name}
-                </h3>
+                <h3 className="text-xl font-semibold">{o.name}</h3>
                 <p className="mt-3 text-gray-500">{"small description"}</p>
               </div>
-              <div className="mt-auto flex divide-x divide-gray-200 border-t border-gray-200 dark:divide-gray-700 dark:border-gray-700">
+              <div className="mt-auto flex divide-x  border-t border-input">
                 <Link
                   href={`/${o.slug}`}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-bl-xl bg-white px-4 py-3 align-middle text-sm font-medium text-gray-700 shadow-sm transition-all hover:bg-gray-50  dark:border-gray-700 dark:bg-slate-900 dark:text-gray-400 dark:hover:bg-slate-800 dark:hover:text-white sm:p-4"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-bl-xl border-input bg-card px-4 py-3 align-middle text-sm font-medium shadow-sm transition-all hover:bg-accent hover:text-accent-foreground sm:p-4"
                 >
                   Manage
                 </Link>
                 <Link
                   href={{ pathname: getStatusPageLink(o.slug, o.customDomain) }}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-br-xl bg-white px-4 py-3 align-middle text-sm font-medium text-gray-700 shadow-sm transition-all hover:bg-gray-50  dark:border-gray-700 dark:bg-slate-900 dark:text-gray-400 dark:hover:bg-slate-800 dark:hover:text-white sm:p-4"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-br-xl border-input bg-card px-4 py-3 align-middle text-sm font-medium shadow-sm transition-all hover:bg-accent hover:text-accent-foreground sm:p-4"
                 >
                   Status Page
                 </Link>

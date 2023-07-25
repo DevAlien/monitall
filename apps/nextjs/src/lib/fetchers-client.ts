@@ -16,7 +16,6 @@ export async function getMonitorCardData(
     data: { data: queryData },
   } = await response.json();
 
-   
   return queryData;
 }
 
