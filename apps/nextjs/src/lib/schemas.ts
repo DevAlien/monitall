@@ -1,4 +1,4 @@
-import { MonitorStatus } from "@prisma/client";
+import { IncidentStatus, MonitorStatus } from "@prisma/client";
 import { z } from "zod";
 
 export const monitorCreateSchema = z.object({
@@ -14,6 +14,14 @@ export const monitorCreateSchema = z.object({
   interval: z.number(),
   regions: z.array(z.string()),
   status: z.nativeEnum(MonitorStatus),
+});
+
+export const incidentCreateSchema = z.object({
+  cause: z.string().min(2, {
+    message: "Cause must be at least 2 characters.",
+  }),
+  status: z.nativeEnum(IncidentStatus),
+  monitorId: z.number(),
 });
 
 export const rpcSchema = z.object({

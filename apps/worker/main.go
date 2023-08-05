@@ -21,6 +21,7 @@ import (
 )
 
 type Region struct {
+	tableName   struct{} `pg:",discard_unknown_columns"`
 	ID          int
 	Name        string
 	Description string
@@ -47,6 +48,7 @@ const (
 )
 
 type Monitor struct {
+	tableName      struct{} `pg:",discard_unknown_columns"`
 	ID             int
 	Name           string
 	Type           MonitorType
@@ -78,6 +80,7 @@ const (
 )
 
 type MonitorEvent struct {
+	tableName   struct{} `pg:",discard_unknown_columns"`
 	ID          int
 	ScheduledAt *time.Time
 	StartTime   *time.Time
@@ -105,6 +108,50 @@ type TinyMonitorEvent struct {
 	MonitorID      int        `json:"monitor_id"`
 	MonitorEventID int        `json:"monitor_event_id"`
 	Body           string     `json:"body"`
+}
+
+type IncidentStatus string
+
+const (
+	IncidentStatusUnresolved   IncidentStatus = "UNRESOLVED"
+	IncidentStatusAcknowledged IncidentStatus = "ACKNOWLEDGED"
+	IncidentStatusResolved     IncidentStatus = "RESOLVED"
+)
+
+type Incident struct {
+	tableName      struct{} `pg:",discard_unknown_columns"`
+	ID             int
+	StartTime      *time.Time
+	EndTime        *time.Time
+	Duration       *int
+	Cause          *string
+	AcknowledgedBy *string
+	Status         IncidentStatus
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+	MonitorID      int
+}
+
+type IncidentActivityType string
+
+const (
+	IncidentActivityTypeMonitor     IncidentActivityType = "MONITOR"
+	IncidentActivityTypeEmail       IncidentActivityType = "EMAIL"
+	IncidentActivityTypeSMS         IncidentActivityType = "SMS"
+	IncidentActivityTypeCall        IncidentActivityType = "CALL"
+	IncidentActivityTypeSlack       IncidentActivityType = "SLACK"
+	IncidentActivityTypeComment     IncidentActivityType = "COMMENT"
+	IncidentActivityTypeEmailOpened IncidentActivityType = "EMAIL_OPENED"
+)
+
+type IncidentActivity struct {
+	tableName  struct{} `pg:",discard_unknown_columns"`
+	ID         int
+	Type       IncidentActivityType
+	Data       json.RawMessage
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+	IncidentID int
 }
 
 var db *pg.DB

@@ -203,7 +203,7 @@ enum IncidentStatus {
 
 model Incident {
   id        Int       @id @default(autoincrement())
-  startTime DateTime? @map(name: "start_time")
+  startTime DateTime? @default(now()) @map(name: "start_time")
   endTime   DateTime? @map(name: "end_time")
   duration  Int?
   cause     String?
